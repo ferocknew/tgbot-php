@@ -1,0 +1,5 @@
+{
+    "require": {
+        "pathetic/tgbot": "~1.3"
+    }
+}

@@ -1,0 +1,31 @@
+{
+    "name": "pathetic/tgbot",
+    "description": "Telegram Bot API Wrapper.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "pathetic",
+            "email": "pathetic.underscore@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5",
+        "guzzlehttp/guzzle": "~6.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit" : "4.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pathetic\\TgBot\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Pathetic\\TgBot\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --colors=always --coverage-text"
+    }
+}
