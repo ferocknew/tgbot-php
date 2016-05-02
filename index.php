@@ -4,7 +4,10 @@ require_once 'vendor/autoload.php';
 use Pathetic\TgBot\Bot as TgBot;
 use GuzzleHttp\Client;
 
-$httpClient = new Client(['proxy' => 'tcp://127.0.0.1:7778', 'verify' => false]);
+$httpClient = new Client([
+    'proxy' => 'tcp://127.0.0.1:7778',
+    'verify' => false,
+]);
 $bot = new TgBot('87628676:AAFacIOCzRaQUpKu3XXrCoTf1kgC-SUJTug', $httpClient);
 
 # Commands
@@ -12,6 +15,11 @@ $bot = new TgBot('87628676:AAFacIOCzRaQUpKu3XXrCoTf1kgC-SUJTug', $httpClient);
 # Usage: /echo "something"
 # You can even set default values: function($message, $something = "I don't know what to say.") {}
 $bot->command('echo', function ($message, $something) use ($bot) {
+    # You can use $message->from->firstName instead of $message->from->first_name
+    $bot->sendMessage($message->chat->id, $message->from->first_name . " says: $something");
+});
+
+$bot->command('test', function ($message, $something) use ($bot) {
     # You can use $message->from->firstName instead of $message->from->first_name
     $bot->sendMessage($message->chat->id, $message->from->first_name . " says: $something");
 });
@@ -40,7 +48,7 @@ $bot->command('img', function ($message, ...$description) use ($bot) {
     $res = json_decode($res, true);
 
     if (!isset($res) || !isset($res[0]['preview'])) {
-        $res_str = 'Cannot get that boobs, trying another one...';
+        $res_str = 'Cannot get that boobs, trying another one';
 
         $bot->sendMessage($message->chat->id, $res_str, null, $message->message_id);
     } else {
@@ -78,7 +86,17 @@ $bot->handle($bot->createUpdateFromRequest());
 
 # Long polling
 # This file should be runned as daemon.
+$update_id = 0;
 while (true) {
-    $bot->handle($bot->getUpdates());
-    sleep(3);
+    $updates = $bot->getUpdates($update_id);
+    foreach ($updates as $k => $up) {
+        if ($update_id >= $up->update_id ) {
+            continue;
+        }
+
+        print_r($up);
+        $update_id = $up->update_id;
+        $bot->handle([$up]);
+    }
+    usleep(2000000);
 }
