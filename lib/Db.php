@@ -8,15 +8,13 @@
  * @Last Modified time: 2016-05-04 11:18:21
  */
 
-class Db
-{
+class Db {
     /**
      * 得到 redis 对象
      * @return Redis
      * @throws Exception
      */
-    public static function get_redis()
-    {
+    public static function get_redis() {
         $redis_config = Common::get_config('redis');
         if (empty($redis_config)) {
             $err = 'error redis config';
@@ -27,7 +25,7 @@ class Db
         }
 
         $redis = new Redis();
-        $redis->connect($redis_config['ip'], $redis_config['port'], $redis_config['timeout']);
+        $redis -> connect($redis_config['ip'], $redis_config['port'], $redis_config['timeout']);
 
         return $redis;
     }
@@ -37,8 +35,7 @@ class Db
      * @return array|bool|mixed|null|string
      * @throws Exception
      */
-    public static function get_bot_info()
-    {
+    public static function get_bot_info() {
         $token = Common::get_config('token');
         if (empty($token)) {
             $err = 'error token';
@@ -48,15 +45,15 @@ class Db
             return null;
         }
 
-        $key = BOT . ':' . (string) $token;
+        $key = BOT . ':' . (string)$token;
         $redis = self::get_redis();
 
-        $bot_info = $redis->get($key);
+        $bot_info = $redis -> get($key);
 
         if (empty($bot_info)) {
-            $bot_info = Telegram::singleton()->get_me();
+            $bot_info = Telegram::singleton() -> get_me();
 
-            $redis->set($key, json_encode($bot_info));
+            $redis -> set($key, json_encode($bot_info));
         } else {
             $bot_info = json_decode($bot_info, true);
         }
@@ -68,8 +65,7 @@ class Db
      * 得到机器人的名字
      * @return string
      */
-    public static function get_bot_name($join = ':')
-    {
+    public static function get_bot_name($join = ':') {
         $bot_info = self::get_bot_info();
 
         return BOT . $join . strtolower($bot_info['username']) . $join;
@@ -80,12 +76,11 @@ class Db
      * @return int
      * @throws Exception
      */
-    public static function get_update_id()
-    {
+    public static function get_update_id() {
         $key = self::get_bot_name() . 'update_id';
         $redis = self::get_redis();
 
-        $id = (int) $redis->get($key);
+        $id = (int)$redis -> get($key);
 
         Common::echo_log('update_id:%s', $id);
 
@@ -98,12 +93,11 @@ class Db
      * @return int
      * @throws Exception
      */
-    public static function set_update_id($id)
-    {
+    public static function set_update_id($id) {
         $key = self::get_bot_name() . 'update_id';
         $redis = self::get_redis();
 
-        return (int) $redis->set($key, $id, 3600);
+        return (int)$redis -> set($key, $id, 3600);
     }
 
     /**
@@ -111,15 +105,14 @@ class Db
      * @return bool|mixed|string
      * @throws Exception
      */
-    public static function get_router($use_cache = true)
-    {
+    public static function get_router($use_cache = true) {
         $key = self::get_bot_name() . 'config:router';
         $redis = self::get_redis();
-        $router = $redis->get($key);
+        $router = $redis -> get($key);
         if ($use_cache == false || empty($router)) {
             $router = Common::get_router();
 
-            $redis->setex($key, 3600, json_encode($router));
+            $redis -> setex($key, 3600, json_encode($router));
         } else {
             $router = json_decode($router, true);
         }
@@ -137,8 +130,7 @@ class Db
      * @return bool
      * @throws Exception
      */
-    public static function set($key, $val, $time = null)
-    {
+    public static function set($key, $val, $time = null) {
         $key = self::get_bot_name() . $key;
         $redis = self::get_redis();
 
@@ -148,12 +140,12 @@ class Db
 
         if (is_numeric($time)) {
             if ($time > 0) {
-                return $redis->setex($key, $time, $val);
+                return $redis -> setex($key, $time, $val);
             } else {
-                return $redis->del($key);
+                return $redis -> del($key);
             }
         } else {
-            return $redis->set($key, $val);
+            return $redis -> set($key, $val);
         }
     }
 
@@ -163,16 +155,16 @@ class Db
      * @return bool|string
      * @throws Exception
      */
-    public static function get($key)
-    {
+    public static function get($key) {
         $key = self::get_bot_name() . $key;
         $redis = self::get_redis();
 
-        $val = $redis->get($key);
+        $val = $redis -> get($key);
         if (is_string($val)) {
             $val = json_decode($val);
         }
 
         return $val;
     }
+
 }

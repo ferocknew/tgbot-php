@@ -15,7 +15,7 @@ Common::set_config('token', '87628676:AAFacIOCzRaQUpKu3XXrCoTf1kgC-SUJTug');
 //清理 redis router 配置
 $bot = Db::get_bot_name();
 $redis = Db::get_redis();
-$redis->del("{$bot}config:router");
+$redis -> del("{$bot}config:router");
 
 // 开始循环处理数据
 while (true) {

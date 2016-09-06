@@ -8,8 +8,7 @@
  * @Last Modified time: 2016-05-15 11:36:24
  */
 
-class Common
-{
+class Common {
 
     private static $router = array();
     private static $config = array();
@@ -18,14 +17,14 @@ class Common
      * 打印日志
      * @param $parm
      */
-    public static function echo_log($parm)
-    {
+    public static function echo_log($parm) {
         $msg = func_get_args();
         if (1 === count($msg)) {
             // 可変長引数がひとつであったとき
             $last_message = $msg[0];
         } else {
-            $format = array_shift($msg); // vsprintfのformat(=$format)とargs(=$msg)を分離する
+            $format = array_shift($msg);
+            // vsprintfのformat(=$format)とargs(=$msg)を分離する
 
             foreach ($msg as $k => $v) {
                 if (!is_string($v)) {
@@ -49,8 +48,7 @@ class Common
      * 得到路由配置表
      * @return type
      */
-    public static function get_router()
-    {
+    public static function get_router() {
         if (empty(self::$router)) {
             //加载基础文件
             if (!class_exists('Base')) {
@@ -105,10 +103,10 @@ class Common
      * @param type $default_value
      * @return type
      */
-    public static function get_config($key = null, $default_value = null)
-    {
+    public static function get_config($key = null, $default_value = null) {
         if (empty(self::$config)) {
-            self::$config = require BASE_PATH . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+            self::$config =
+            require BASE_PATH . 'config' . DIRECTORY_SEPARATOR . 'config.php';
         }
 
         if ($key) {
@@ -128,10 +126,10 @@ class Common
      * @param type $value
      * @return type
      */
-    public static function set_config($key, $value)
-    {
+    public static function set_config($key, $value) {
         if (empty(self::$config)) {
-            self::$config = require BASE_PATH . 'config' . DIRECTORY_SEPARATOR . 'config.php';
+            self::$config =
+            require BASE_PATH . 'config' . DIRECTORY_SEPARATOR . 'config.php';
         }
 
         self::$config[$key] = $value;
@@ -145,8 +143,7 @@ class Common
      * @return type
      * @throws Exception
      */
-    public static function post($url, $data, $res_type = 'json', $method = 'POST')
-    {
+    public static function post($url, $data, $res_type = 'json', $method = 'POST') {
         if (empty($url)) {
             $err = 'post error url';
             Common::echo_log($err);
@@ -158,12 +155,10 @@ class Common
         $before_time = self::microtime_float();
 
         $postdata = http_build_query($data);
-        $opts = array(
-            'http' => array(
+        $opts = array('http' => array(
                 'method' => $method,
                 'header' => 'Content-type: application/x-www-form-urlencoded',
-            ),
-        );
+            ), );
 
         //检查是否有设置代理
         $proxy = self::get_config('proxy');
@@ -204,8 +199,7 @@ class Common
      * @param string $url
      * @param array $post
      */
-    public static function curl($url, $post = null, $type = 'json')
-    {
+    public static function curl($url, $post = null, $type = 'json') {
         if (empty($url)) {
             $err = 'post error url';
             Common::echo_log($err);
@@ -273,12 +267,11 @@ class Common
      * 报告管理员错误
      * @param type $text
      */
-    public static function report_err($text)
-    {
+    public static function report_err($text) {
         if (self::get_config('report')) {
             $admins = Common::get_config('admins');
             foreach ($admins as $v) {
-                $msg = Telegram::singleton()->sendMessage(array(
+                $msg = Telegram::singleton() -> sendMessage(array(
                     'chat_id' => $v,
                     'text' => $text,
                 ));
@@ -293,11 +286,10 @@ class Common
      * 得到时间的毫秒值
      * @return float
      */
-    public static function microtime_float()
-    {
+    public static function microtime_float() {
         list($usec, $sec) = explode(" ", microtime());
 
-        return ((float) $usec + (float) $sec);
+        return ((float)$usec + (float)$sec);
     }
 
     /**
@@ -316,8 +308,7 @@ class Common
      * @param integer|string $dec 小数位或者m
      * @return mixed
      */
-    public static function G($start, $end = '', $dec = 4)
-    {
+    public static function G($start, $end = '', $dec = 4) {
         static $_info = array();
         static $_mem = array();
 
@@ -351,10 +342,17 @@ class Common
      * @param $size
      * @return string
      */
-    public static function convert_memory_size($size)
-    {
-        $unit = array('b', 'kb', 'mb', 'gb', 'tb', 'pb');
+    public static function convert_memory_size($size) {
+        $unit = array(
+            'b',
+            'kb',
+            'mb',
+            'gb',
+            'tb',
+            'pb'
+        );
 
-        return @round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . ' ' . $unit[(int) $i];
+        return @round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . ' ' . $unit[(int)$i];
     }
+
 }

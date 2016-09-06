@@ -8,8 +8,7 @@
  * @Last Modified time: 2016-05-04 15:41:48
  */
 
-class Telegram
-{
+class Telegram {
 
     private static $instance = array();
     private $token;
@@ -17,21 +16,19 @@ class Telegram
     /**
      * @param null $user_id
      */
-    private function __construct($token)
-    {
+    private function __construct($token) {
         if (null === $token) {
             throw new Exception('error token');
         }
 
-        $this->token = $token;
+        $this -> token = $token;
     }
 
     /**
      * @param null $token
      * @return Telegram
      */
-    public static function singleton($token = null)
-    {
+    public static function singleton($token = null) {
         if (null === $token) {
             $token = Common::get_config('token');
             if (empty($token)) {
@@ -50,8 +47,7 @@ class Telegram
      * 得到机器人的信息
      * @return array
      */
-    public function get_me()
-    {
+    public function get_me() {
         $url = "https://api.telegram.org/bot{$this->token}/getMe";
         $res = Common::curl($url, array());
 
@@ -79,8 +75,7 @@ class Telegram
      * @return mixed
      * @throws Exception
      */
-    public function get_updates($data)
-    {
+    public function get_updates($data) {
         $url = "https://api.telegram.org/bot{$this->token}/getUpdates";
         $res = Common::curl($url, $data);
 
@@ -97,8 +92,7 @@ class Telegram
      * @return mixed
      * @throws Exception
      */
-    public function send_message($data)
-    {
+    public function send_message($data) {
         $url = "https://api.telegram.org/bot{$this->token}/sendMessage";
         $res = Common::curl($url, $data);
 
@@ -108,4 +102,5 @@ class Telegram
 
         return null;
     }
+
 }

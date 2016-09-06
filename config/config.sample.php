@@ -18,18 +18,12 @@ return array(
     ),
 
     //管理员配置信息
-    'admins' => array(
-        0,
-    ),
+    'admins' => array(0, ),
 
     //是否发送失败记录给管理员
     'report' => false,
 
     //设置机器人对应开启的功能
     //不在列表中的是全部开启的
-    'plugins' => array(
-        'bot_dc' => array(
-            'echo_',
-        ),
-    ),
+    'plugins' => array('bot_dc' => array('echo_', ), ),
 );

@@ -8,16 +8,14 @@
  * @Last Modified time: 2016-05-15 11:35:59
  */
 
-class Process
-{
+class Process {
     private static $instance = array();
 
     /**
      * @param null $class_name
      * @return Base
      */
-    public static function get_class($class_name = null)
-    {
+    public static function get_class($class_name = null) {
         if (!isset(self::$instance[$class_name])) {
             $class = ucfirst(strtolower($class_name));
 
@@ -41,8 +39,7 @@ class Process
      * @param $message
      * @throws Exception
      */
-    public static function run($messages = null)
-    {
+    public static function run($messages = null) {
         Common::echo_log('处理消息列表: $messages=%s', print_r($messages, true));
 
         if (empty($messages)) {
@@ -53,7 +50,7 @@ class Process
             }
 
             // 抓到更新的信息
-            $messages = Telegram::singleton()->get_updates(array(
+            $messages = Telegram::singleton() -> get_updates(array(
                 'offset' => $last_update_id + 1,
                 'limit' => $limit,
             ));
@@ -75,8 +72,7 @@ class Process
      * 执行抓取到的命令
      * @param $messages
      */
-    public static function handler($message)
-    {
+    public static function handler($message) {
         //拿取路由规则
         $router = Db::get_router();
         $bot_info = Db::get_bot_info();
@@ -116,9 +112,7 @@ class Process
         $plugins = null;
 
         //不管什么情况每次都要执行一次的函数
-        $run_fun = array(
-            'pre_process',
-        );
+        $run_fun = array('pre_process', );
 
         //如果有新人的话
         if (isset($msg['new_chat_participant'])) {
@@ -145,10 +139,7 @@ class Process
                 $tmp = array_filter($tmp);
 
                 //如果命令调用名称一致
-                if (
-                    strtolower($reg . '@' . $bot_info['username']) == strtolower($tmp[0]) ||
-                    strtolower($reg) == strtolower($tmp[0])
-                ) {
+                if (strtolower($reg . '@' . $bot_info['username']) == strtolower($tmp[0]) || strtolower($reg) == strtolower($tmp[0])) {
                     $common = array_shift($tmp);
 
                     $parms = $tmp;
@@ -175,8 +166,8 @@ class Process
 
         //执行消息的运行命令
         if (!empty($plugins)) {
-            $plugins->set_msg($msg, $text, $parms, $common);
-            $plugins->run();
+            $plugins -> set_msg($msg, $text, $parms, $common);
+            $plugins -> run();
         }
     }
 
@@ -184,17 +175,17 @@ class Process
      * 执行对应的命令
      * @param $comm
      */
-    public static function loop_with($fun_arr, $msg, $text = null, $parms = null, $common = null)
-    {
+    public static function loop_with($fun_arr, $msg, $text = null, $parms = null, $common = null) {
         $router = Common::get_router();
         $plugins = array_flip($router);
         foreach ($plugins as $class_name => $tmp) {
             $class = self::get_class($class_name);
-            $class->set_msg($msg, $text, $parms, $common);
+            $class -> set_msg($msg, $text, $parms, $common);
 
             foreach ($fun_arr as $fun) {
-                $class->$fun();
+                $class -> $fun();
             }
         }
     }
+
 }
